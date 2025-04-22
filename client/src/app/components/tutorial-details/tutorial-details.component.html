@@ -1,0 +1,55 @@
+<div *ngIf="viewMode; else editable">
+  <div *ngIf="!currentTutorial">
+    <br />
+    <p>Please click on a Blog...</p>
+  </div>
+</div>
+
+<ng-template #editable>
+  <div *ngIf="currentTutorial.id" class="edit-form">
+    <h4>Edit Blog</h4>
+    <form>
+      <!-- Title Field -->
+      <div class="form-group">
+        <label><strong>Title</strong></label>
+        <input type="text" class="form-control" id="title"
+          [(ngModel)]="currentTutorial.title" name="title" />
+      </div>
+
+      <!-- Description Field -->
+      <div class="form-group">
+        <label><strong>Description</strong></label>
+        <input type="text" class="form-control" id="content"
+          [(ngModel)]="currentTutorial.content" name="content" />
+      </div>
+
+      <!-- Author Field -->
+      <div class="form-group">
+        <label><strong>Author</strong></label>
+        <input type="text" class="form-control" id="author"
+          [(ngModel)]="currentTutorial.author" name="author" />
+      </div>
+
+      <!-- Category Dropdown -->
+      <div class="form-group">
+        <label><strong>Category</strong></label>
+        <select class="form-control" id="category" [(ngModel)]="currentTutorial.category" name="category">
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+    </form>
+
+    <!-- Delete and Update Buttons -->
+    <button class="badge badge-danger mr-2" (click)="deleteTutorial()">Delete</button>
+    <button type="submit" class="badge badge-success mb-2" (click)="updateTutorial()">Update</button>
+
+    <!-- Message after update/delete -->
+    <p>{{ message }}</p>
+  </div>
+
+  <!-- Message when no Blog is selected -->
+  <div *ngIf="!currentTutorial.id">
+    <br />
+    <p>Cannot access this Blog...</p>
+  </div>
+</ng-template>

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./web  # Path to the Dockerfile for your Spring Boot blog app
+    ports:
+      - "8083:8083"  # Expose port used by your Spring Boot app
+    depends_on:
+      - db
+    volumes:
+      - ./web:/app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/blog_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://host.docker.internal:8761/eureka/
+      SPRING_APPLICATION_NAME: Blog
+      SERVER_PORT: 8083
+
+  db:
+    image: postgres:15
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: blog_db
+
+volumes:
+  db_data:

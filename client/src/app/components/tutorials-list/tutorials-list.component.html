@@ -1,0 +1,67 @@
+<div class="list row">
+  <!-- Filters: Category and Keyword Search (aligned right at the top) -->
+  <div class="col-md-12 text-right filters-container">
+    <!-- Filter by Category (Auto-Filtering) -->
+    <div class="input-group mb-3 filter-input">
+      <label for="categorySelect" class="sr-only">Select Category</label>
+      <select
+        id="categorySelect"
+        class="form-control form-control-sm"
+        [(ngModel)]="selectedCategory"
+        (ngModelChange)="filterTutorials()"
+        title="Select a category">
+        <option value="" disabled selected>Select Category</option>
+        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+      </select>
+    </div>
+
+    <!-- Advanced Search (Works Together with Category Filter) -->
+    <div class="input-group mb-3 filter-input">
+      <input type="text" class="form-control form-control-sm" placeholder="Search with keyword" [(ngModel)]="keyword" (input)="filterTutorials()" />
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <!-- Blog List -->
+    <div class="table-container">
+      <h4>Blog List</h4>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Author</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tutorial of filteredTutorials; let i = index"
+              [class.active]="i == currentIndex"
+              (click)="setActiveTutorial(tutorial, i)"
+              (dblclick)="navigateToEdit(tutorial)"
+              (contextmenu)="openContextMenu($event, tutorial)">
+            <td>{{ tutorial.title }}</td>
+            <td>{{ tutorial.category }}</td>
+            <td>{{ tutorial.author }}</td>
+            <td>{{ tutorial.content || 'No description available' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tutorial details -->
+  <div class="col-md-6">
+    <app-tutorial-details [viewMode]="true" [currentTutorial]="currentTutorial"></app-tutorial-details>
+  </div>
+
+  <!-- Custom Context Menu -->
+  <div *ngIf="contextMenuVisible"
+       class="context-menu"
+       [ngStyle]="{ left: contextMenuPosition.x + 'px', top: contextMenuPosition.y + 'px' }">
+    <ul class="list-group">
+      <li class="list-group-item" (click)="navigateToEditFromContext()">Edit</li>
+      <!-- You can add more options here if needed -->
+    </ul>
+  </div>
+</div>
