@@ -9,80 +9,96 @@ import { Router } from '@angular/router';
   styleUrls: ['./tutorials-list.component.css'],
 })
 export class TutorialsListComponent implements OnInit {
-  tutorials?: Tutorial[];
+  tutorials: Tutorial[] = [];
+  filteredTutorials: Tutorial[] = [];
+
   currentTutorial: Tutorial = {};
   currentIndex = -1;
-  title = '';
-  category = '';  // For category filtering
-  keyword = '';   // For advanced search
-  selectedCategory: string = '';
-  filteredTutorials: Tutorial[] = [];
-  categories: string[] = ['FOOD', 'HEALTH', 'TECHNOLOGY', 'ENTERTAINMENT', 'LIFESTYLE']; // Example categories
 
-  // For Context Menu
+  title = '';
+  category = '';
+  keyword = '';
+  selectedCategory = '';
+  isCollapsed = false; // ✅ Added
+
+  categories: string[] = ['FOOD', 'HEALTH', 'TECHNOLOGY', 'ENTERTAINMENT', 'LIFESTYLE'];
+
   contextMenuVisible = false;
   contextMenuPosition = { x: 0, y: 0 };
   contextMenuTutorial: Tutorial = {};
 
-  constructor(private tutorialService: TutorialService, private router: Router) {}
+  constructor(
+    private tutorialService: TutorialService,
+    private router: Router
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.retrieveTutorials();
     document.addEventListener('click', () => {
       this.contextMenuVisible = false;
     });
   }
 
-  // Retrieve all blogs
+  toggleSidebar(): void { // ✅ Added
+    this.isCollapsed = !this.isCollapsed;
+  }
+
   retrieveTutorials(): void {
     this.tutorialService.getAll().subscribe({
-      next: (data) => {
-        this.tutorials = data;
-        this.filteredTutorials = data;
-        console.log(data);
+      next: (data: any) => {
+        console.log('🚀 API Response:', data);
+
+        if (Array.isArray(data.content)) {
+          this.tutorials = data.content;
+        } else {
+          console.error('❌ Unexpected format from API:', data);
+          this.tutorials = [];
+        }
+
+        this.filteredTutorials = [...this.tutorials];
       },
-      error: (e) => console.error(e),
+      error: (err) => {
+        console.error('❌ Failed to fetch tutorials:', err);
+        this.tutorials = [];
+        this.filteredTutorials = [];
+      },
     });
   }
 
-  // Filter tutorials by category or keyword
   filterTutorials(): void {
-    // First, filter based on the selected category and the search keyword
-    this.filteredTutorials = this.tutorials?.filter(tutorial => {
+    this.filteredTutorials = this.tutorials.filter(tutorial => {
       const matchesCategory = this.selectedCategory
         ? tutorial.category === this.selectedCategory
-        : true;  // If no category is selected, show all tutorials
+        : true;
 
       const matchesKeyword = this.keyword
-        ? (tutorial.title?.includes(this.keyword) || tutorial.content?.includes(this.keyword))
-        : true;  // Apply keyword filtering
+        ? (tutorial.title?.toLowerCase().includes(this.keyword.toLowerCase()) ||
+           tutorial.content?.toLowerCase().includes(this.keyword.toLowerCase()))
+        : true;
 
       return matchesCategory && matchesKeyword;
-    }) || [];
+    });
+
+    console.log('✅ Filtered tutorials:', this.filteredTutorials);
   }
 
-
-  // Navigate to the Edit page when a tutorial is double-clicked
   navigateToEdit(tutorial: Tutorial): void {
     if (tutorial.id) {
       this.router.navigate(['/edit', tutorial.id]);
     }
   }
 
-  // Open the custom context menu on right-click
   openContextMenu(event: MouseEvent, tutorial: Tutorial): void {
-    event.preventDefault(); // Prevent the default context menu
+    event.preventDefault();
     this.contextMenuVisible = true;
     this.contextMenuPosition = { x: event.clientX, y: event.clientY };
     this.contextMenuTutorial = tutorial;
   }
 
-  // Close the context menu when clicking anywhere else
   closeContextMenu(): void {
     this.contextMenuVisible = false;
   }
 
-  // Navigate to the edit page from the context menu
   navigateToEditFromContext(): void {
     if (this.contextMenuTutorial.id) {
       this.router.navigate(['/tutorials', this.contextMenuTutorial.id]);
@@ -90,7 +106,6 @@ export class TutorialsListComponent implements OnInit {
     }
   }
 
-  // Set active tutorial for details
   setActiveTutorial(tutorial: Tutorial, index: number): void {
     this.currentTutorial = tutorial;
     this.currentIndex = index;
