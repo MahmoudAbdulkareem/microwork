@@ -19,7 +19,7 @@ export class TutorialsListComponent implements OnInit {
   category = '';
   keyword = '';
   selectedCategory = '';
-  isCollapsed = false; // ✅ Added
+  isCollapsed = false;
 
   categories: string[] = ['FOOD', 'HEALTH', 'TECHNOLOGY', 'ENTERTAINMENT', 'LIFESTYLE'];
 
@@ -39,7 +39,7 @@ export class TutorialsListComponent implements OnInit {
     });
   }
 
-  toggleSidebar(): void { // ✅ Added
+  toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;
   }
 
@@ -109,5 +109,10 @@ export class TutorialsListComponent implements OnInit {
   setActiveTutorial(tutorial: Tutorial, index: number): void {
     this.currentTutorial = tutorial;
     this.currentIndex = index;
+  }
+
+  // ✅ Add Blog Navigation
+  navigateToAdd(): void {
+    this.router.navigate(['/add']);
   }
 }

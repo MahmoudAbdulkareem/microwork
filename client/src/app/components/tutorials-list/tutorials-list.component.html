@@ -1,28 +1,41 @@
 <div class="list row">
   <!-- Filters: Category and Keyword Search (aligned right at the top) -->
-  <div class="col-md-12 text-right filters-container">
-    <!-- Filter by Category (Auto-Filtering) -->
-    <div class="input-group mb-3 filter-input">
-      <label for="categorySelect" class="sr-only">Select Category</label>
-      <select
-        id="categorySelect"
-        class="form-control form-control-sm"
-        [(ngModel)]="selectedCategory"
-        (ngModelChange)="filterTutorials()"
-        title="Select a category">
-        <option value="" disabled selected>Select Category</option>
-        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
-      </select>
-    </div>
+  <div class="col-md-12 d-flex justify-content-between align-items-start mb-3">
+    <!-- "Add Blog" Button -->
+<!-- "Add Blog" Button -->
+<button class="btn btn-success btn-sm" style="background-color: #0b6623; border-color: #0b6623;" (click)="navigateToAdd()">
+  Add Blog
+</button>
 
-    <!-- Advanced Search (Works Together with Category Filter) -->
-    <div class="input-group mb-3 filter-input">
-      <input type="text" class="form-control form-control-sm" placeholder="Search with keyword" [(ngModel)]="keyword" (input)="filterTutorials()" />
+    <div class="filters-container d-flex gap-2">
+      <!-- Filter by Category (Auto-Filtering) -->
+      <div class="input-group filter-input">
+        <label for="categorySelect" class="sr-only">Select Category</label>
+        <select
+          id="categorySelect"
+          class="form-control form-control-sm"
+          [(ngModel)]="selectedCategory"
+          (ngModelChange)="filterTutorials()"
+          title="Select a category">
+          <option value="" disabled selected>Select Category</option>
+          <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        </select>
+      </div>
+
+      <!-- Advanced Search -->
+      <div class="input-group filter-input">
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Search with keyword"
+          [(ngModel)]="keyword"
+          (input)="filterTutorials()" />
+      </div>
     </div>
   </div>
 
+  <!-- Blog List -->
   <div class="col-md-12">
-    <!-- Blog List -->
     <div class="table-container">
       <h4>Blog List</h4>
       <table class="table table-bordered">
@@ -61,7 +74,6 @@
        [ngStyle]="{ left: contextMenuPosition.x + 'px', top: contextMenuPosition.y + 'px' }">
     <ul class="list-group">
       <li class="list-group-item" (click)="navigateToEditFromContext()">Edit</li>
-      <!-- You can add more options here if needed -->
     </ul>
   </div>
 </div>
